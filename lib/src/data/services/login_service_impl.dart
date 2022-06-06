@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:tresastronautas_frotend/src/data/models/access_token_model.dart';
-import 'package:tresastronautas_frotend/src/data/models/generic_response_model.dart';
 import 'package:tresastronautas_frotend/src/data/services/login_service.dart';
 import 'package:tresastronautas_frotend/src/data/services/preferences_service.dart';
 
@@ -36,14 +33,6 @@ class LoginServiceImpl implements LoginService {
     }
   }
 
-  @override
-  Future<GenericResponseModel> signOut() async {
-    try {
-      throw UnimplementedError();
-    } on DioError catch (e) {
-      throw Exception(e.message);
-    }
-  }
 
   Map<String, dynamic> _setHeaders() => <String, dynamic>{
         'Accept': 'application/json',

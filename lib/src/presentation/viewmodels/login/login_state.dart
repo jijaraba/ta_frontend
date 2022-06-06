@@ -23,7 +23,6 @@ extension LoginStateX on LoginState {
   bool get isLoading => this is _LoginStateLoading;
   bool get isSuccess => this is _LoginStateSuccess;
   bool get isError => this is _LoginStateError;
-  LoginErrorType get erroType => (this as _LoginStateError).type;
   String? get errorMessage => (this as _LoginStateError).error;
 }
 

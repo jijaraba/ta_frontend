@@ -28,7 +28,7 @@ class RestaurantServiceImpl implements RestaurantService {
   Future<List<RestaurantModel>> getRestaurantList() async {
     try {
       final response = await _client.get(
-        '/product',
+        '/product/${_preferencesService.getAccessToken()!.user.id}',
         options: Options(
           contentType: Headers.jsonContentType,
           headers: _setHeaders(),
@@ -97,7 +97,7 @@ class RestaurantServiceImpl implements RestaurantService {
     'Accept': 'application/json',
     'Content-type': 'application/json',
     'Authorization':
-    'Bearer ${_preferencesService.getAccessToken()!.accessToken}',
+    'Bearer ${_preferencesService.getAccessToken()?.accessToken ?? ''}',
   };
 
 

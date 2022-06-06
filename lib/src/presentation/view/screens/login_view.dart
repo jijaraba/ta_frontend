@@ -127,11 +127,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   void _onChangeState(BuildContext context, LoginState state) {
     if (state.isSuccess) context.go('/home');
-    final localization = context.localizations;
-    final message = localization.loginErrorMessage(state.erroType);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+      SnackBar(content: Text('')),
     );
   }
 }

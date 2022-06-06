@@ -3,6 +3,4 @@ import 'package:tresastronautas_frotend/src/data/models/generic_response_model.d
 
 abstract class LoginService {
   Future<AccessTokenModel> login(String email, String password);
-
-  Future<GenericResponseModel> signOut();
 }

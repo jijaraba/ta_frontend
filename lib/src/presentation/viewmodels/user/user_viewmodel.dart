@@ -8,20 +8,18 @@ import 'package:tresastronautas_frotend/src/presentation/viewmodels/user/user_st
 
 class UserViewModel extends StateNotifier<UserState> {
   UserViewModel(
-      this._loginRepository,
-      this._userRepository,
-      this._preferencesRepository,
-      ) : super(const UserState.initial());
+    this._loginRepository,
+    this._userRepository,
+    this._preferencesRepository,
+  ) : super(const UserState.initial());
 
   final ILoginRepository _loginRepository;
   final IUserRepository _userRepository;
   final IPreferencesRepository _preferencesRepository;
 
-
   Future<void> signOut() async {
     state = const UserState.loading();
     try {
-      await _loginRepository.signOut();
       state = const UserState.success(action: UserAction.logout);
       await _preferencesRepository.setUserId(null);
       await _preferencesRepository.setUserLocal(null);

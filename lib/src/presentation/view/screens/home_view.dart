@@ -177,11 +177,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
                             ),
                           ),
                           CustomButton(
-                            text: context.localizations
-                                .text('logoutText'),
-                            onPressed: () => ref
-                                .read(userViewModelPod.notifier)
-                                .signOut(),
+                            text: context.localizations.text('logoutText'),
+                            onPressed: () {
+                              ref
+                                  .read(userViewModelPod.notifier)
+                                  .signOut()
+                                  .then(
+                                    (value) => context.go('/login'),
+                                  );
+                            },
                             borderColor: colorScheme.primary,
                             textColor: colorScheme.primary,
                             background: colorScheme.surface,
