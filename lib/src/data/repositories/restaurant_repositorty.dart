@@ -16,6 +16,12 @@ class RestaurantRepository implements IRestaurantRepository {
   }
 
   @override
+  Future<RestaurantEntity> getRestaurant({required String id}) async {
+    final restaurantModel = await _restaurantService.getRestaurant(id: id);
+    return restaurantModel.toRestaurantEntity();
+  }
+
+  @override
   Future<LocationEntity> searchCity({required String search}) async {
     final locationModel = await _restaurantService.searchCity(search: search);
     return locationModel;
@@ -25,6 +31,17 @@ class RestaurantRepository implements IRestaurantRepository {
   Future<bool> productAdd({required String name, required String price}) async {
     final locationModel =
         await _restaurantService.productAdd(name: name, price: price);
+    return locationModel;
+  }
+
+  @override
+  Future<bool> productEdit(
+      {required String id, required String name, required String price}) async {
+    final locationModel = await _restaurantService.productEdit(
+      id: id,
+      name: name,
+      price: price,
+    );
     return locationModel;
   }
 }

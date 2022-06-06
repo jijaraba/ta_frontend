@@ -56,9 +56,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ref.watch(geolocationDataPod).whenOrNull(data: (data) => data);
 
     final productData = ref.watch(productDataPod);
-    print("ssd");
-    print(productData);
-
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: userData == null
@@ -451,7 +448,14 @@ class _ProductWrapper extends ConsumerWidget {
     return Column(
       children: <Widget>[
         for (final restaurant in restaurants)
-          RestaurantItem(restaurant: restaurant),
+          GestureDetector(
+            onTap: () {
+              context.go('/product/edit/${restaurant.id}');
+            },
+            child: RestaurantItem(
+              restaurant: restaurant,
+            ),
+          ),
       ],
     );
   }

@@ -28,6 +28,17 @@ class ProductViewModel extends StateNotifier<ProductState> {
     });
   }
 
+  Future<void> productEdit(String id, ProductFormState product) async {
+    return _run(() async {
+      final productResult = await _restaurantRepository.productEdit(
+        id: id,
+        name: product.name.value,
+        price: product.price.value,
+      );
+      state = ProductState.success();
+    });
+  }
+
   Future<void> _run(Future<void> Function() action) async {
     state = const ProductState.loading();
 

@@ -8,10 +8,19 @@ import '../../domain/entities/location_entity.dart';
 abstract class RestaurantService {
   Future<List<RestaurantModel>> getRestaurantList();
 
+  Future<RestaurantModel> getRestaurant({required String id});
+
   Future<LocationEntity> searchCity({
     required String search,
   });
+
   Future<bool> productAdd({
+    required String name,
+    required String price,
+  });
+
+  Future<bool> productEdit({
+    required String id,
     required String name,
     required String price,
   });
@@ -28,7 +37,7 @@ class RestaurantServiceImpl implements RestaurantService {
   Future<List<RestaurantModel>> getRestaurantList() async {
     try {
       final response = await _client.get(
-        '/product/${_preferencesService.getAccessToken()!.user.id}',
+        '/product/${_preferencesService.getAccessToken()?.user.id}',
         options: Options(
           contentType: Headers.jsonContentType,
           headers: _setHeaders(),
@@ -46,20 +55,62 @@ class RestaurantServiceImpl implements RestaurantService {
   }
 
   @override
-  Future<bool> productAdd({required String name, required String price}) async {
+  Future<RestaurantModel> getRestaurant({required String id}) async {
     try {
-      final response = await _client.post(
-        '/product',
+      final response = await _client.get(
+        '/product/id/${id}',
         options: Options(
           contentType: Headers.jsonContentType,
           headers: _setHeaders(),
         ),
-        data: {
-          "name" : name,
-          "price" : price,
-          "owner" : _preferencesService.getAccessToken()!.user.id,
-        }
       );
+      if (response.statusCode == 200) {
+        return RestaurantModel.fromJson(response.data);
+      }
+      return RestaurantModel.fromJson({});
+    } on DioError catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  @override
+  Future<bool> productAdd({required String name, required String price}) async {
+    try {
+      final response = await _client.post('/product',
+          options: Options(
+            contentType: Headers.jsonContentType,
+            headers: _setHeaders(),
+          ),
+          data: {
+            "name": name,
+            "price": price,
+            "owner": _preferencesService.getAccessToken()!.user.id,
+          });
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } on DioError catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  @override
+  Future<bool> productEdit({
+    required String id,
+    required String name,
+    required String price,
+  }) async {
+    try {
+      final response = await _client.put('/product/${id}',
+          options: Options(
+            contentType: Headers.jsonContentType,
+            headers: _setHeaders(),
+          ),
+          data: {
+            "name": name,
+            "price": price,
+          });
       if (response.statusCode == 200) {
         return true;
       }
@@ -92,14 +143,10 @@ class RestaurantServiceImpl implements RestaurantService {
     }
   }
 
-
   Map<String, dynamic> _setHeaders() => <String, dynamic>{
-    'Accept': 'application/json',
-    'Content-type': 'application/json',
-    'Authorization':
-    'Bearer ${_preferencesService.getAccessToken()?.accessToken ?? ''}',
-  };
-
-
-
+        'Accept': 'application/json',
+        'Content-type': 'application/json',
+        'Authorization':
+            'Bearer ${_preferencesService.getAccessToken()?.accessToken ?? ''}',
+      };
 }

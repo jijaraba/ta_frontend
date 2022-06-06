@@ -44,3 +44,11 @@ final productDataPod =
     return ref.watch(restaurantRepositoryPod).getRestaurantList();
   },
 );
+
+
+final productGetDataPod =
+FutureProvider.family.autoDispose<RestaurantEntity, String>(
+      (ref, id) async {
+    return ref.watch(restaurantRepositoryPod).getRestaurant(id:id);
+  },
+);

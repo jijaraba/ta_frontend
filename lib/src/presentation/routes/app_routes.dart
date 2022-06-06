@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tresastronautas_frotend/src/presentation/view/screens/home_view.dart';
 import 'package:tresastronautas_frotend/src/presentation/view/screens/login_view.dart';
 import 'package:tresastronautas_frotend/src/presentation/view/screens/product_add.dart';
+import 'package:tresastronautas_frotend/src/presentation/view/screens/product_edit.dart';
 import 'package:tresastronautas_frotend/src/presentation/view/screens/register_view.dart';
 import 'package:tresastronautas_frotend/src/presentation/view/screens/splash_view.dart';
 
@@ -47,6 +48,20 @@ final router = GoRouter(
         key: state.pageKey,
         child: const ProductAddView(),
       ),
+    ),
+    GoRoute(
+      name: 'product_edit',
+      path: '/product/edit/:id',
+      pageBuilder: (_, state) {
+        final productId = state.params['id'];
+        if (productId == null) throw Exception('Product no found');
+        return MaterialPage<void>(
+          key: state.pageKey,
+          child: ProductEditView(
+            productId: productId,
+          ),
+        );
+      },
     ),
   ],
   errorPageBuilder: (context, state) => MaterialPage<void>(

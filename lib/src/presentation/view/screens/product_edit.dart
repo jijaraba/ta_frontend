@@ -11,16 +11,18 @@ import 'package:tresastronautas_frotend/src/core/forms/user/generic_user_form.da
 import 'package:tresastronautas_frotend/src/core/hooks/curved_animation_hook.dart';
 import 'package:tresastronautas_frotend/src/core/presentation/widgets/custom_button.dart';
 import 'package:tresastronautas_frotend/src/core/presentation/widgets/custom_text_field.dart';
+import 'package:tresastronautas_frotend/src/core/presentation/widgets/error_container.dart';
 import 'package:tresastronautas_frotend/src/core/res/res.dart';
 import 'package:tresastronautas_frotend/src/core/utils/common_extensions.dart';
 import 'package:tresastronautas_frotend/src/presentation/viewmodels/common_viewmodel_provider.dart';
 import 'package:tresastronautas_frotend/src/presentation/viewmodels/product/product_state.dart';
 
-class ProductEditView extends ConsumerStatefulWidget {
-  const ProductEditView({Key? key, this.uid, this.email}) : super(key: key);
+import '../../../domain/entities/restaurant_entity.dart';
 
-  final String? uid;
-  final String? email;
+class ProductEditView extends ConsumerStatefulWidget {
+  const ProductEditView({Key? key, this.productId}) : super(key: key);
+
+  final String? productId;
 
   @override
   ConsumerState<ProductEditView> createState() => _ProductEditViewState();
@@ -49,6 +51,8 @@ class _ProductEditViewState extends ConsumerState<ProductEditView> {
       (_, ProductState state) => _onChangeState(context, state),
     );
 
+    final productData = ref.watch(productGetDataPod(widget.productId ?? ''));
+
     return Stack(children: [
       Scaffold(
         backgroundColor: colorScheme.background,
@@ -61,26 +65,80 @@ class _ProductEditViewState extends ConsumerState<ProductEditView> {
                   horizontal: 30,
                   vertical: 20,
                 ),
-                child: Column(
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: _NameText(),
+                child: productData.when(
+                  data: (data) => Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: _NameText(product: data),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: _PriceText(product: data),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: _SubmitButton(
+                          onSubmit: () => ref
+                              .read(productViewModelPod.notifier)
+                              .productEdit(
+                                data.id,
+                                ref.read(productNotifierPod),
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  loading: () => Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: _PriceText(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: _SubmitButton(
-                        onSubmit: () =>
-                            ref.read(productViewModelPod.notifier).productAdd(
-                                  ref.read(productNotifierPod),
+                  ),
+                  error: (e, s) => Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            child: ErrorContainer(
+                              text: localization.text('genericError'),
+                              subtitle:
+                                  localization.text('genericErrorSubtitle'),
+                              onRetryPress: () => ref.refresh(productDataPod),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 30,
+                            ),
+                            child: Column(
+                              children: [
+                                CustomButton(
+                                  text:
+                                      context.localizations.text('logoutText'),
+                                  onPressed: () {
+                                    ref
+                                        .read(userViewModelPod.notifier)
+                                        .signOut();
+                                    context.go('/login');
+                                  },
+                                  borderColor: colorScheme.primary,
+                                  textColor: colorScheme.primary,
+                                  background: colorScheme.surface,
+                                  elevation: 0,
                                 ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -170,7 +228,9 @@ class __RestaurantHeaderState extends ConsumerState<_RestaurantHeader> {
 }
 
 class _NameText extends HookConsumerWidget {
-  const _NameText({Key? key}) : super(key: key);
+  final RestaurantEntity product;
+
+  const _NameText({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -179,7 +239,9 @@ class _NameText extends HookConsumerWidget {
     final nameText = ref.watch(
       productNotifierPod.select((form) => form.name),
     );
-    final nameTextController = useTextEditingController(text: nameText.value);
+    final nameTextController = useTextEditingController(
+      text: nameText.value.isNotEmpty ? nameText.value : product.name,
+    );
 
     return CustomTextField(
       textController: nameTextController,
@@ -197,16 +259,23 @@ class _NameText extends HookConsumerWidget {
 }
 
 class _PriceText extends HookConsumerWidget {
-  const _PriceText({Key? key}) : super(key: key);
+  final RestaurantEntity product;
+
+  const _PriceText({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localization = context.localizations;
 
     final priceText = ref.watch(
-      productNotifierPod.select((form) => form.name),
+      productNotifierPod.select((form) => form.price),
     );
-    final priceTextController = useTextEditingController(text: priceText.value);
+
+    final priceTextController = useTextEditingController(
+      text: priceText.value.isNotEmpty
+          ? priceText.value
+          : product.price.toString(),
+    );
 
     return CustomTextField(
       textController: priceTextController,
@@ -234,7 +303,7 @@ class _SubmitButton extends ConsumerWidget {
     final loginFormState = ref.watch(productNotifierPod);
 
     return CustomButton(
-      text: context.localizations.text('productButtonText').toUpperCase(),
+      text: context.localizations.text('productEditButtonText').toUpperCase(),
       onPressed: loginFormState.status == FormzStatus.valid ? onSubmit : null,
       paddingHorizontal: 100,
       textColor: loginFormState.status == FormzStatus.valid

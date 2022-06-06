@@ -204,7 +204,7 @@ class _PriceText extends HookConsumerWidget {
     final localization = context.localizations;
 
     final priceText = ref.watch(
-      productNotifierPod.select((form) => form.name),
+      productNotifierPod.select((form) => form.price),
     );
     final priceTextController = useTextEditingController(text: priceText.value);
 

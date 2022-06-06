@@ -21,6 +21,7 @@
   "productPriceRequiredText": "Campo requerido",
   "productPriceInvalidText": "Campo inválido",
   "productButtonText": "Agregar",
+  "productEditButtonText": "Editar",
   "continueButtonText": "Registrar",
   "loginButtonText": "Login",
   "registerButtonText": "Register",
