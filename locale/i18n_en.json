@@ -1,0 +1,32 @@
+{
+  "common": {
+    "app_name": "TresAstronautas"
+  },
+  "nameLabel": "Nombre completo",
+  "nameRequiredText": "Nombre completo requerido",
+  "nameInvalidText": "Nombre completo inválido",
+  "emailLabel": "Email",
+  "emailRequiredText": "Email requerido",
+  "emailInvalidText": "Email inválido",
+  "passwordLabel": "Password",
+  "passwordRequiredText": "Password requerido",
+  "passwordInvalidText": "Password inválido",
+  "searchLabel": "Search",
+  "searchRequiredText": "Campo requerido",
+  "searchInvalidText": "Campo inválido",
+  "productNameLabel": "Name",
+  "productNameRequiredText": "Campo requerido",
+  "productNameInvalidText": "Campo inválido",
+  "productPriceLabel": "Precio",
+  "productPriceRequiredText": "Campo requerido",
+  "productPriceInvalidText": "Campo inválido",
+  "productButtonText": "Agregar",
+  "continueButtonText": "Registrar",
+  "loginButtonText": "Login",
+  "registerButtonText": "Register",
+  "searchButtonText": "Search",
+  "logoutText": "Logout",
+  "genericError": "Error",
+  "genericErrorSubtitle": "Recargar de nuevo",
+  "addProduct": "Add Product"
+}
